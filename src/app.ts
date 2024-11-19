@@ -5,6 +5,7 @@ import { typeDefs } from "./schema/typeDefs";
 import { userResolver } from "./resolvers/userResolver";
 import { transactionResolver } from "./resolvers/transactionResolver";
 import "./config/setupDB";
+import { Request } from "express";
 
 // Explicitly type the app as Application
 const app: Application = express();
@@ -15,7 +16,7 @@ const startApolloServer = async () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers: [userResolver, transactionResolver],
-    context: ({ req }) => ({
+    context: ({ req} : {req: Request}) => ({
       authToken: req.headers.authorization || ""
     }),
   });

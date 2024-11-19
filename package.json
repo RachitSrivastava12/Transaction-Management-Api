@@ -4,14 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev src/app.ts",    
-    "build": "echo 'No build step required'",  
+    "dev": "ts-node-dev src/app.ts",
+    "build": "echo 'No build step required'",
     "start": "ts-node src/app.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "apollo-server-express": "^3.13.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
