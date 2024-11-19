@@ -17,6 +17,7 @@ export const typeDefs = gql`
     currency: String!
     type: String!
     created_at: String!
+    user: User!
   }
 
   type Query {

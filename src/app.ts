@@ -35,6 +35,8 @@ const startApolloServer = async () => {
     context: ({ req }) => ({
       authToken: req.headers.authorization || "",
     }),
+    introspection: true, // Enable introspection
+   // Enable GraphQL Playground
   });
 
   await server.start();
