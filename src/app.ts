@@ -7,6 +7,7 @@ import { userResolver } from "./resolvers/userResolver";
 import { transactionResolver } from "./resolvers/transactionResolver";
 import "./config/setupDB";
 import { Request } from "express";
+import {Response} from "express";
 
 const app: Application = express();
 
@@ -28,7 +29,7 @@ app.use(
 app.use(cors());
 
 // Add a root route handler
-app.get("/", (req, res) => {
+app.get("/", (req : Request, res: Response) => {
   res.json({ 
     message: "API is running", 
     documentation: "/graphql" 
