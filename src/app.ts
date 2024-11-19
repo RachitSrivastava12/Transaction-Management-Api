@@ -7,34 +7,26 @@ import { userResolver } from "./resolvers/userResolver";
 import { transactionResolver } from "./resolvers/transactionResolver";
 import "./config/setupDB";
 import { Request } from "express";
-import {Response} from "express";
 
 const app: Application = express();
 
-// Add helmet middleware with GraphQL-friendly CSP
+// Add helmet middleware to secure headers
+app.use(helmet());
+
+// Custom CSP (Content Security Policy)
 app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "https:"],
-      },
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"], // Only allow content from the same origin
+      scriptSrc: ["'self'", "https://trustedscripts.example.com"], // Allow scripts from the same origin and trusted sources
+      imgSrc: ["'self'", "https://example.com"], // Allow images from the same origin and example.com
+      styleSrc: ["'self'", "https://trustedstyles.example.com"], // Allow styles from the same origin and trusted sources
+      // Add other necessary sources
     },
   })
 );
 
-// Configure CORS
 app.use(cors());
-
-// Add a root route handler
-app.get("/", (req : Request, res: Response) => {
-  res.json({ 
-    message: "API is running", 
-    documentation: "/graphql" 
-  });
-});
 
 const startApolloServer = async () => {
   const server = new ApolloServer({
@@ -43,31 +35,23 @@ const startApolloServer = async () => {
     context: ({ req }) => ({
       authToken: req.headers.authorization || "",
     }),
-    introspection: true,  // Enable introspection for production
   });
 
   await server.start();
-  
-  server.applyMiddleware({
+
+  await server.applyMiddleware({
     app: app as any,
     path: '/graphql',
-    cors: {
-      origin: '*',
-      credentials: true
-    }
   });
 
   const PORT = process.env.PORT || 4000;
-  
   app.listen(PORT, () => {
-    console.log(`🚀 Server is running at http://localhost:${PORT}${server.graphqlPath}`);
-    console.log(`📊 GraphQL Playground available at http://localhost:${PORT}${server.graphqlPath}`);
+    console.log(`Server running on http://localhost:${PORT}${server.graphqlPath}`);
   });
 };
 
 startApolloServer().catch((error) => {
   console.error('Failed to start server:', error);
-  process.exit(1); // Exit on startup failure
 });
 
 export default app;
