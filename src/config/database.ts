@@ -9,9 +9,8 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }, 
 });
 
-pool.on("error", (err) => {
-  console.error("Unexpected error on idle client", err);
-  process.exit(-1);
-});
+pool.connect()
+  .then(() => console.log("Connected to the database!"))
+  .catch((err) => console.error("Database connection error:", err));
 
 export default pool;
